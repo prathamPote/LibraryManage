@@ -72,41 +72,6 @@ class maincode:
         self.fm3 = Frame(root, bg='#fff', width=900, height=390)
         self.fm3.place(x=0, y=110)
 
-        # ------------------------Clock---------------------------
-
-        def clock():
-            h = str(time.strftime("%H"))
-            m = str(time.strftime("%M"))
-            s = str(time.strftime("%S"))
-
-            if int(h) >= 12 and int(m) >= 0:
-                self.lb7_hr.config(text="PM")
-
-            # if int(h) > 12:
-            # h = str(int(h) // 12)
-
-            self.lb1_hr.config(text=h)
-            self.lb3_hr.config(text=m)
-            self.lb5_hr.config(text=s)
-
-            self.lb1_hr.after(200, clock)
-
-        self.lb1_hr = Label(self.fm3, text='12', font=('times new roman', 20, 'bold'), bg='#fc1c1c', fg='white')
-        self.lb1_hr.place(x=560, y=0, width=60, height=30)
-
-        self.lb3_hr = Label(self.fm3, text='05', font=('times new roman', 20, 'bold'), bg='#0ee38b', fg='white')
-        self.lb3_hr.place(x=630, y=0, width=60, height=30)
-
-        self.lb5_hr = Label(self.fm3, text='37', font=('times new roman', 20, 'bold'), bg='#2b1dff', fg='white')
-        self.lb5_hr.place(x=700, y=0, width=60, height=30)
-
-        self.lb7_hr = Label(self.fm3, text='AM', font=('times new roman', 17, 'bold'), bg='#2b1dff', fg='white')
-        self.lb7_hr.place(x=770, y=0, width=60, height=30)
-
-        clock()
-
-        # -------------------------------clock closed------------------------
-
         self.canvas8 = Canvas(self.fm3, bg='black', width=400, height=300)
         self.canvas8.place(x=475, y=37)
         self.photo9 = PhotoImage(file="bb.png")
@@ -189,7 +154,7 @@ class maincode:
         # ---------------------Exit Button-----------------------
         try:
 
-            self.bt8 = Button(self.fm3, text='  log Out', fg='#fff', bg='#ff0076', font=('Arial', 15, 'bold'),
+            self.bt8 = Button(self.fm3, text='  Log Out', fg='#fff', bg='#ff0076', font=('Arial', 15, 'bold'),
                               width=170,
                               height=0, bd=7, relief='flat', cursor='hand2', command=self.code)
             self.bt8.place(x=250, y=280)
@@ -272,15 +237,18 @@ class maincode:
                 self.aut = self.ee3.get()
                 self.edi = self.ee4.get()
                 self.pri = self.ee5.get()
-                cursor = dd.cursor()
-                cursor.execute("INSERT INTO stbook(Book_ID,Title,Author,Edition,Price) values(?,?,?,?,?)", (self.id,
-                                                                                                            self.ttl,
-                                                                                                            self.aut,
-                                                                                                            self.edi,
-                                                                                                            self.pri))
-                dd.commit()
-                self.clear()
-
+                if self.id ==''  or self.ttl =='' or self.aut == '' or self.edi == '' or self.pri =='' :
+                    messagebox.showerror("Warning","Please Enter all the fields")
+                else:
+                    cursor = dd.cursor()
+                    cursor.execute("INSERT INTO stbook(Book_ID,Title,Author,Edition,Price) values(?,?,?,?,?)", (self.id,
+                                                                                                                self.ttl,
+                                                                                                                self.aut,
+                                                                                                                self.edi,
+                                                                                                                self.pri))
+                    dd.commit()
+                    self.clear()
+                    messagebox.showinfo("Library Management System","Book Added sucessfully")
             def clear(self):
                 self.ee1.delete(0, END)
                 self.ee2.delete(0, END)
@@ -324,7 +292,7 @@ class maincode:
                 self.ob.place(x=180, y=90)
                 self.em = Entry(self.fc, width=30, bd=5, relief='ridge', font=('Arial', 8, 'bold'))
                 self.em.place(x=105, y=60)
-                self.lb = Label(self.fc, text='ERP-ID', bg='#fff', fg='black', font=('Arial', 10, 'bold'))
+                self.lb = Label(self.fc, text='USN', bg='#fff', fg='black', font=('Arial', 10, 'bold'))
                 self.lb.place(x=15, y=120)
                 self.em2 = Entry(self.fc, width=30, bd=5, relief='ridge', font=('Arial', 8, 'bold'))
                 self.em2.place(x=105, y=120)
@@ -349,7 +317,7 @@ class maincode:
                 self.ai = self.em.get()
                 self.b = self.em2.get()
                 cursor = dc.cursor()
-                cursor.execute("SELECT * FROM student WHERE Roll_no='" + self.ai + "' or ERP_ID='" + self.b + "'")
+                cursor.execute("SELECT * FROM student WHERE Roll_no='" + self.ai + "' or USN='" + self.b + "'")
                 self.var = cursor.fetchone()
                 if self.var != None:
                     self.lb1 = Label(self.fmi, text='Name :', fg='black', font=('Arial', 10, 'bold'))
@@ -495,8 +463,8 @@ class maincode:
                                                                                                      'bold'))
                         self.lbn.place(x=120, y=330)
 
-                    if self.max >= 3:
-                        messagebox.showerror('Library System', 'SIR, MINIMUM 3 BOOKS ARE REQUIRED!')
+                    if self.max >2:
+                        messagebox.showerror('Library System', 'Maximum 3 Books can be issued')
 
                     self.label = Label(self.fr, text='ADD MORE BOOKS ', bg='#fff', fg='black', font=('arial', 10,
                                                                                                      'bold'))
@@ -511,13 +479,9 @@ class maincode:
                     self.it2.place(x=280, y=220)
 
                     # ------------------------ISSUED button-----------------------------
-                    self.button1 = Button(self.boot, text='Issued', bg='red', fg='#fff', width=30, height=0,
+                    self.button1 = Button(self.boot, text='Issue', bg='red', fg='#fff', width=30, height=0,
                                           font=('Arial', 8, 'bold'), command=self.issued)
                     self.button1.place(x=30, y=610)
-
-                    self.btn = Button(self.boot, text='Send mail', bg='blue', fg='#fff', width=30, height=0,
-                                      font=('Arial', 8, 'bold'), command=self.mail)
-                    self.btn.place(x=30, y=650)
 
                     # -----------------------date module uses-------------------------
 
@@ -526,7 +490,7 @@ class maincode:
                     self.cal = Calendar(self.boot, selectmode="day", bg='black', year=2020, month=9, day=6)
                     self.cal.place(x=20, y=380)
 
-                    btn1 = Button(self.boot, text="Confirm Date", command=self.get_data, bg='#ff0076',
+                    btn1 = Button(self.boot, text="Confirm Due Date", command=self.get_data, bg='#ff0076',
                                   font=('arial', 10,
                                         'bold'),
                                   fg='#fff', relief='flat')
@@ -570,37 +534,17 @@ class maincode:
                 if self.n <= 3:
                     book = dc.cursor()
                     book.execute("UPDATE student SET No_book='" + str(self.n) + "' WHERE Roll_no='" + self.ai + "' or "
-                                                                                                                "ERP_ID='" + self.b + "' ")
+                                                                                                                "USN='" + self.b + "' ")
                     dc.commit()
 
                 comm = dc.cursor()
                 comm.execute("UPDATE student SET From_date='" + str(self.x) + "', To_date='" + str(self.datecon) + "' "
-                                                                                                                   "WHERE Roll_no='" + self.ai + "' or ERP_ID='" + self.b + "'")
+                                                                                                                   "WHERE Roll_no='" + self.ai + "' or USN='" + self.b + "'")
                 dc.commit()
 
                 messagebox.showinfo('Library System', 'YOUR BOOK ISSUED')
 
-            def mail(self):
 
-                self.baby = self.em2.get()
-                cursor = dc.cursor()
-                cursor.execute("SELECT * FROM student WHERE ERP_ID='" + self.baby + "'")
-                self.var = cursor.fetchone()
-                sender = "aps08072001@gmail.com"
-                reciever = self.var[5]
-                with open("pass.txt", 'r') as file:
-                    password = file.read()
-                message = """FROM: LIBRARY DEPARTMENT
-                              TO : Library Issued Books Department
-                              Subject: Hello Students! Your book has benn Issued"""
-                try:
-                    server = smtplib.SMTP_SSL("smtp.gmail.com", 465)
-                    server.login(sender, password)
-                    server.sendmail(sender, reciever, message)
-                    print("ok")
-                    messagebox.showinfo("Library System", "Send mail Successfully !")
-                except:
-                    pass
 
         obk = test()
         obk.issue()
@@ -733,7 +677,7 @@ class maincode:
                 self.ed.place(x=0, y=0)
                 self.lac = Label(self.ed, text='RETURN BOOKS ', bg='#0f624c', fg='#fff', font=('Arial', 12, 'bold'))
                 self.lac.place(x=175, y=5)
-                self.label8 = Label(self.f1, text='ERP ID', bg='#fff', fg='black', font=('arial', 10, 'bold'))
+                self.label8 = Label(self.f1, text='USN ', bg='#fff', fg='black', font=('arial', 10, 'bold'))
                 self.label8.place(x=85, y=65)
                 self.entry4 = Entry(self.f1, width=30, bd=4, relief='groove', font=('arial', 8, 'bold'))
                 self.entry4.place(x=188, y=65)
@@ -753,79 +697,83 @@ class maincode:
                 self.charge = 0
                 self.entry = self.entry4.get()
                 cursor = dc.cursor()
-                cursor.execute("SELECT * FROM student WHERE ERP_id='" + self.entry + "'")
-                dc.commit()
+                cursor.execute("SELECT * FROM student WHERE USN='" + self.entry.lower() + "'")
                 self.data = cursor.fetchone()
-                if self.data != None:
-                    self.get_date = date.today()
-                    cursor = dc.cursor()
-                    cursor.execute("UPDATE student SET submit_date='" + str(
-                        self.get_date) + "' WHERE ERP_ID='" + self.entry + "'")
-                    dc.commit()
-
-                    cursor = dd.cursor()
-                    cursor.execute("UPDATE stbook SET Issue='', ID='' WHERE ID='" + self.entry + "'")
-                    dd.commit()
-
-                    from datetime import datetime
-
-                    self.tom = Tk()
-                    self.tom.geometry("300x250+590+348")
-                    self.tom.iconbitmap("aa.ico")
-                    self.tom.title("Library System")
-                    self.tom.resizable(0, 0)
-                    self.tom.configure(bg="black")
-
-                    cursor = dc.cursor()
-                    cursor.execute("SELECT * FROM student WHERE ERP_ID='" + self.entry + "'")
-                    dc.commit()
-                    self.var = cursor.fetchone()
-                    if self.var != None:
-
-                        # -----------------between two date calculate days---------------------
-
-                        self.a = self.var[9]
-                        self.b = self.var[10]
-                        formatStr = '%Y-%m-%d'
-                        delta1 = datetime.strptime(self.a, formatStr)
-                        delta2 = datetime.strptime(self.b, formatStr)
-                        delta = delta2 - delta1
-                        chm = delta.days
-                        # print(chm)
-
-                        # ------------------calculate fine charge------------------
-                        self.lb = Label(self.tom, text="Fine Charge", bg="black", fg="Blue", font=('arial', 17, 'bold'))
-                        self.lb.place(x=75, y=60)
-
-                        if chm <= 0:
-                            self.lc1 = Label(self.tom, text="0 Rs.", bg="black", fg="#fff", font=('arial', 12,
-                                                                                                  'bold'))
-                            self.lc1.place(x=120, y=120)
-
-                        else:
-
-                            self.charge = (5 * chm) * self.var[12]
-
-                            # print(self.charge)
-
-                            self.lc2 = Label(self.tom, text=self.charge, bg="black", fg="#fff", font=('arial', 12,
-                                                                                                      'bold'))
-                            self.lc2.place(x=110, y=120)
-                            self.lc3 = Label(self.tom, text='Rs.', bg="black", fg="#fff",
-                                             font=('arial', 12, 'bold'))
-                            self.lc3.place(x=130, y=120)
-
-                        cursor1 = dc.cursor()
-                        cursor1.execute("UPDATE student SET From_date='',To_date='',submit_date='',No_book='',"
-                                        "Charge='" + str(self.charge) + "' WHERE ERP_ID='" + self.entry + "'")
+                print(self.data)
+                if self.data:
+                    if not self.data[12]:
+                        messagebox.showerror("Hurray!","You have no more books to return... "
+                                                       "atleast not any that we know of. XD")
+                    else:
+                        self.get_date = date.today()
+                        cursor = dc.cursor()
+                        cursor.execute("UPDATE student SET submit_date='" + str(
+                            self.get_date) + "' WHERE USN='" + self.entry + "'")
                         dc.commit()
 
-                    self.tom.mainloop()
+                        cursor = dd.cursor()
+                        cursor.execute("UPDATE stbook SET Issue='', ID='' WHERE ID='" + self.entry + "'")
+                        dd.commit()
+
+                        from datetime import datetime
+
+                        self.tom = Tk()
+                        self.tom.geometry("300x250+590+348")
+                        self.tom.iconbitmap("aa.ico")
+                        self.tom.title("Library System")
+                        self.tom.resizable(0, 0)
+                        self.tom.configure(bg="turquoise")
+
+                        cursor = dc.cursor()
+                        cursor.execute("SELECT * FROM student WHERE USN='" + self.entry + "'")
+                        dc.commit()
+                        self.var = cursor.fetchone()
+                        if self.var != None:
+
+                            # -----------------between two date calculate days---------------------
+
+                            self.b = self.var[10]
+                            self.a = self.var[9]
+                            formatStr = '%Y-%m-%d'
+                            delta1 = datetime.strptime(self.a, formatStr)
+                            delta2 = datetime.strptime(self.b, formatStr)
+                            delta = delta2- delta1
+                            chm = delta.days
+                            print(chm)
+
+                            # ------------------calculate fine charge------------------
+                            self.lb = Label(self.tom, text="Fine Charge", bg="black", fg="Blue", font=('arial', 17, 'bold'))
+                            self.lb.place(x=75, y=60)
+
+                            if chm <= 0:
+                                self.lc1 = Label(self.tom, text="0 Rs.", bg="black", fg="#fff", font=('arial', 12,
+                                                                                                            'bold'))
+                                self.lc1.place(x=120, y=120)
+
+                            else:
+
+                                self.charge = (5 * chm) * self.var[12]
+
+                                print(self.charge)
+
+                                self.lc2 = Label(self.tom, text=self.charge, bg="black", fg="#fff", font=('arial', 12,
+                                                                                                          'bold'))
+                                self.lc2.place(x=150, y=120)
+                                self.lc3 = Label(self.tom, text='Rs.', bg="blue", fg="#fff",
+                                                 font=('arial', 12, 'bold'))
+                                self.lc3.place(x=110, y=120)
+
+                            cursor1 = dc.cursor()
+                            cursor1.execute("UPDATE student SET From_date='',To_date='',submit_date='',No_book='',"
+                                            "Charge='" + str(self.charge) + "' WHERE USN='" + self.entry + "'")
+                            dc.commit()
+
+                        self.tom.mainloop()
 
 
 
                 else:
-                    messagebox.showwarning("Library System", "YOUR ERP_ID IN NOT FOUND !")
+                    messagebox.showwarning("Library System", "Invalid USN !")
 
         object = retu()
 
@@ -863,10 +811,11 @@ class maincode:
             def deldata(self):
                 self.a = self.entry4.get()
                 cursor = dd.cursor()
-                cursor.execute("DELETE FROM stbook WHERE Book_ID='" + self.a + "'")
-                dd.commit()
-                self.da = cursor.fetchone()
-                if self.da != None:
+                cursor.execute(f"SELECT * FROM stbook WHERE Book_ID='{self.a}'")
+                result = cursor.fetchone()
+                if result:
+                    cursor.execute(f"DELETE FROM stbook WHERE Book_ID='{self.a}'")
+                    dd.commit()
                     messagebox.showinfo('Library System', 'YOUR DATA IS DELETED !')
                 else:
                     messagebox.showerror('Library System', 'YOUR DATA IS NOT FOUND !')
